@@ -5,6 +5,7 @@ import com.atguigu.commonutils.R;
 import com.atguigu.eduservice.entity.EduTeacher;
 import com.atguigu.eduservice.entity.vo.TeacherQuery;
 import com.atguigu.eduservice.service.EduTeacherService;
+import com.atguigu.servicebase.config.exception.GuliException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -26,9 +27,9 @@ import java.util.List;
  */
 // 只有带RestController才可以进行数据的传送与返回
 @RestController
-@Api(tags = {"讲师管理"})
 @CrossOrigin //跨域
 @RequestMapping("/eduservice/teacher")
+@Api(tags = {"讲师管理"})
 public class EduTeacherController {
     // 注入service
     @Autowired
@@ -41,7 +42,11 @@ public class EduTeacherController {
     @GetMapping("/findAll")
     public R findAll() {
         List<EduTeacher> list = teacherService.list(null);
-        //int i = 10/0;
+        try {
+            int a = 10 / 0;
+        } catch (Exception e) {
+            throw new GuliException(20001, "出现自定义的异常");
+        }
         return R.ok().data("items", list);
     }
 
@@ -159,6 +164,7 @@ public class EduTeacherController {
     }
 
     // 讲师修改
+    // 在修改或者添加的时候，才会用@RequestBody注解，注解需要前端传回某个数据类型
     @PutMapping("updateTeacher/{id}")
     @ApiOperation(value = "根据ID修改讲师数据")
     public R updateById(
