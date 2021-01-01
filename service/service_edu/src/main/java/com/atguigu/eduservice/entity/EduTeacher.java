@@ -48,18 +48,15 @@ public class EduTeacher implements Serializable {
     @ApiModelProperty(value = "排序")
     private Integer sort;
 
-    // 做逻辑删除，添加特定的注解
     @ApiModelProperty(value = "逻辑删除 1（true）已删除， 0（false）未删除")
-    @TableLogic
     private Boolean isDeleted;
 
-    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建时间")
+    @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value = "更新时间")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date gmtModified;
-
 
 }
