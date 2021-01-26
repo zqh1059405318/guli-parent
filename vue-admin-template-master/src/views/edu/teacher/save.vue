@@ -89,7 +89,7 @@ export default {
       saveBtnDisabled: false, // 保存按钮是否禁用
       imagecropperShow: false, // 上传弹框组件是否显示
       imagecropperKey: 0, //上传组件key值
-      BASE_API: 'http://localhost:8002', //地址
+      BASE_API: process.env.BASE_API, //地址
     };
   },
 
