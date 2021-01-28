@@ -88,7 +88,7 @@ export default {
       //上传弹框组件是否显示
       saveBtnDisabled: false, // 保存按钮是否禁用
       imagecropperShow: false, // 上传弹框组件是否显示
-      imagecropperKey: 0, //上传组件key值
+      imagecropperKey: 0, //上传组件key值,如果增加，相当于重新初始化了一次组件
       BASE_API: process.env.BASE_API, //地址
     };
   },
@@ -117,6 +117,7 @@ export default {
         this.imagecropperShow=false
         //上传之后接口返回图片地址
         this.teacher.avatar = data.url
+        // 重新初始化组件
         this.imagecropperKey = this.imagecropperKey+1
     },
     // 初始化界面（根据是新增还是添加）
