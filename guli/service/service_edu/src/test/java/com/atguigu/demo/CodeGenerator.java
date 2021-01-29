@@ -27,7 +27,7 @@ public class CodeGenerator {
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
         // 绝对路径不会出问题
-        gc.setOutputDir("F:\\online-study\\guli-parent\\service\\service_edu" + "/src/main/java");
+        gc.setOutputDir("F:\\online-study\\guli\\service\\service_edu" + "/src/main/java");
         gc.setAuthor("testjava");
         gc.setOpen(false); //生成后是否打开资源管理器
         gc.setFileOverride(false); //重新生成时文件是否覆盖
@@ -43,7 +43,7 @@ public class CodeGenerator {
         dsc.setUrl("jdbc:mysql://49.234.66.129:3306/guli?serverTimezone=GMT%2B8");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("12345678");
+        dsc.setPassword("qihangwudi");
         dsc.setDbType(DbType.MYSQL);
         mpg.setDataSource(dsc);
 

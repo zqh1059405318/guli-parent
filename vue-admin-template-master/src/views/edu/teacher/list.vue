@@ -37,7 +37,7 @@
       <el-button type="default" @click="resetData()">清空</el-button>
     </el-form>
 
-    <!-- 表格 -->
+    <!-- 表格，表格中的数据由list中取得 :data表示单向绑定 -->
     <el-table
       :data="list"
       border
@@ -70,6 +70,7 @@
       <el-table-column label="操作" width="200" align="center">
         <template slot-scope="scope">
           <router-link :to="'/teacher/save/'+scope.row.id">
+          <!-- 如果点击修改的话，会跳转到对应的save界面，同时会传给save一个当前教师的id值 -->
             <el-button type="primary" size="mini" icon="el-icon-edit">修改</el-button>
           </router-link>
           <el-button type="danger" size="mini" icon="el-icon-delete" @click="removeDataById(scope.row.id)">删除</el-button>
@@ -85,7 +86,7 @@
       :total="total"
       style="padding: 30px 0; text-align: center;"
       layout="total, prev, pager, next, jumper"
-      @current-change="getList" 
+      @current-change="getList"  
     />
   </div>
 </template>
@@ -97,40 +98,42 @@ import teacher from '@/api/edu/teacher'
 
 export default {
 
-    data() {
+    data() {  // 从前端返回给后端的data，在里面可以先填写默认值
         return {
-            list: null, //查询之后接口返回集合
-            page: 1, //当前页
-            limit: 10, //每页记录数
-            total: 0, //总记录数
-            teacherQuery: {} //条件封装对象 值可以不定义会自动加进去
+            list: null, //查询之后接口返回的数据集合，也就是teacher的列表
+            page: 1, //当前页，默认当前页为1
+            limit: 10, //每页记录数，默认为10
+            total: 0, //总记录数，默认为0
+            teacherQuery: {} //条件封装对象 值可以不定义会自动加进去，默认没有，就说明如果一开始返回data，就是无条件查询
         }
     },
-    created() {
+    created() { //当界面被创建出来的时候，就会调用created里面的函数
         this.getList()
     },
     methods: {
-        //讲师列表方法
+        //讲师列表方法，参数也可以有默认值
         getList(page = 1) {
             this.page = page
-            teacher.getTeacherListPage(this.page,this.limit,this.teacherQuery)
-                   .then(response => {
+            teacher.getTeacherListPage(this.page,this.limit,this.teacherQuery) //调用api中的方法发送给后端请求
+                   .then(response => {  //得到恢复之后，也就是说response是后端返回给前端的数据
                        this.list = response.data.rows
                        this.total = response.data.total
                    })
         },
-        //清空方法
+        //清空方法，清空表单中的输入条件数据，然后重新查询一遍所有的数据。
         resetData() {
             this.teacherQuery = {}
             this.getList()
         },
         //删除讲师
         removeDataById(id) {
+            // 出现一个提示框
             this.$confirm('此操作将永久删除讲师记录, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+              // 调用删除的方法，删除之后.then给出删除成功的信息
               teacher.removeTeacher(id)
                    .then(response => {
                     this.$message({

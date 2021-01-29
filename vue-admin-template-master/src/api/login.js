@@ -11,6 +11,7 @@ export function login(username, password) {
   })
 }
 
+// 登陆的时候
 export function getInfo(token) {
   return request({
     url: '/eduservice/user/info',

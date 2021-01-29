@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+// 本类为统一异常处理器类
 // 专门定义exception的注解
 @ControllerAdvice
 // 往日志里写日常

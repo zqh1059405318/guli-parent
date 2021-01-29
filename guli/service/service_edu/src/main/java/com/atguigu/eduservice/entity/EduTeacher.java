@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 讲师
+ * 讲师 编写的实体类，用于mysql查询 要与mysql表中的进行对应
  * </p>
  *
  * @author testjava
@@ -49,9 +49,11 @@ public class EduTeacher implements Serializable {
     private Integer sort;
 
     @ApiModelProperty(value = "逻辑删除 1（true）已删除， 0（false）未删除")
+    @TableLogic
     private Boolean isDeleted;
 
     @ApiModelProperty(value = "创建时间")
+    //TableField为自动填充的注解，当满足条件时，会自动对属性进行填充，比如更新
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;
 

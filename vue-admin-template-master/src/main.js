@@ -9,7 +9,7 @@ import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 import '@/styles/index.scss' // global css
 
 import App from './App'
-import router from './router'
+import router from './router' // 引入了路由模块
 import store from './store'
 
 import '@/icons' // icon
@@ -21,7 +21,7 @@ Vue.config.productionTip = false
 
 new Vue({
   el: '#app',
-  router,
+  router, // 挂载路由
   store,
   render: h => h(App)
 })

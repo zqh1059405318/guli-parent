@@ -11,6 +11,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+//放在这个模块里 是让每个服务都可以使用swag
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {

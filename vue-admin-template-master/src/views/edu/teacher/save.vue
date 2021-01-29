@@ -38,7 +38,7 @@
           <!--
       v-show：是否显示上传组件
       :key：类似于id，如果一个页面多个图片上传控件，可以做区分
-      :url：后台上传的url地址
+      :url：后台上传的url地址，在项目中，别的url都放在了teacher.js这个文件夹中，上传的url由于是调用的组件，所以放在这里了。
       @close：关闭上传组件
       @crop-upload-success：上传成功后的回调 -->
       <image-cropper
@@ -75,7 +75,7 @@ export default {
   // 声明组件之后才可以进行使用
   components: { ImageCropper, PanThumb },
   data() {
-    return {
+    return {  //都存在默认值，也就是说老师的某些值可以省略掉不写
       teacher: {
         name: "",
         sort: 0,
@@ -98,6 +98,9 @@ export default {
     this.init()
   },
 
+  // 如果不加watch监听会出现以下问题：第一次点击修改的时候，界面里有数据，第二次再去点击
+  // 添加讲师，预期没有数据，结果表单页面上还是显示数据，这是因为多次路由跳转到同一个界面的时候，
+  //created方法只会执行一次 ，因此其实一直是第一次的数据。
   watch: {
     // 监听
     $route(to, from) {
@@ -107,26 +110,16 @@ export default {
   },
 
   methods: {
-    close() { //关闭上传弹框的方法
-        this.imagecropperShow=false
-        //上传组件初始化
-        this.imagecropperKey = this.imagecropperKey+1
-    },
-    //上传成功方法
-    cropSuccess(data) {
-        this.imagecropperShow=false
-        //上传之后接口返回图片地址
-        this.teacher.avatar = data.url
-        // 重新初始化组件
-        this.imagecropperKey = this.imagecropperKey+1
-    },
+
     // 初始化界面（根据是新增还是添加）
     init() {
+      // 判断路径中是否有id值
       if (this.$route.params && this.$route.params.id) {
         const id = this.$route.params.id;
+        // 如果有id值，调用getInfo，给teacher对象填充属性
         this.getInfo(id);
       } else {
-        //如果是增加的话，必须把表单里的东西全部清空
+        //如果是新增的话，必须把表单里的东西全部清空就可以了，其他的不用动，因为不需要初始化显示东西，所以不用调用函数
         this.teacher = {};
       }
     },
@@ -173,6 +166,19 @@ export default {
         this.$router.push({ path: "/teacher/table" });
         // 回到列表页面，路由跳转
       });
+    },
+    close() { //关闭上传弹框的方法
+        this.imagecropperShow=false
+        //上传组件初始化
+        this.imagecropperKey = this.imagecropperKey+1
+    },
+    //上传成功方法
+    cropSuccess(data) {
+        this.imagecropperShow=false
+        //上传之后接口返回图片地址
+        this.teacher.avatar = data.url
+        // 重新初始化组件
+        this.imagecropperKey = this.imagecropperKey+1
     },
   },
 };

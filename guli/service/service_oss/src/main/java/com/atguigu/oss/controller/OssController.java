@@ -18,7 +18,7 @@ public class OssController {
     @Resource
     private OssService ossService;
 
-    //上传头像的方法
+    //上传头像的方法, 返回的是头像储存的地址。
     @PostMapping
     public R UploadOssFile(MultipartFile file) {
         String url = this.ossService.uploadFileAvatar(file);

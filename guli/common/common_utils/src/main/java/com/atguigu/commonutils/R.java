@@ -18,6 +18,7 @@ public class R {
     @ApiModelProperty(value = "返回消息")
     private String message;
 
+    // 返回数据库利用的是Map类型，因此data其实不是固定的，可以一直进行push
     @ApiModelProperty(value = "返回数据")
     private Map<String, Object> data = new HashMap<String, Object>();
 
@@ -40,6 +41,7 @@ public class R {
         return r;
     }
 
+    // 返回this 可以进行链式编程
     public R success(Boolean success){
         this.setSuccess(success);
         return this;
@@ -60,7 +62,6 @@ public class R {
         return this;
     }
 
-    // 返回this 可以进行链式编程
     public R data(Map<String, Object> map){
         this.setData(map);
         return this;

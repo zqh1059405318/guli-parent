@@ -43,7 +43,7 @@ public class EduTeacherController {
         return R.ok().data("items", list);
     }
 
-    // 根据ID对讲师进行删除
+    // 根据ID对讲师进行删除，id值需要通过路径来进行传递，@PathVariable可以获取路径中的id值。
     @ApiOperation(value = "根据ID删除讲师")
     @DeleteMapping("{id}")
     public R removeById(
@@ -62,7 +62,7 @@ public class EduTeacherController {
             @ApiParam(name = "limit", value = "每页记录数", required = true)
             @PathVariable Long limit) {
 
-        // 创建page对象
+        // 如果是分页查询的话，就要首先创建page对象
         Page<EduTeacher> pageTeacher = new Page<>(current, limit);
 
         // 调用方法实现分页
@@ -74,7 +74,9 @@ public class EduTeacherController {
     }
 
     //条件查询带分页的方法
-    //@RequestBody(required = false) 这个值可以没有的意思
+    //@RequestBody(required = false) required是指变量是否可以为空
+    //如果变脸带了@RequestBody注解，则是前端往后端传的一部分json/xml的数据。
+    //TeacherQuery是vo里面的一个条件类，前端要传一个条件类进来（json格式）
     @PostMapping("pageTeacherCondition/{current}/{limit}")
     public R pageTeacherCondition(@PathVariable long current, @PathVariable long limit,
                                   @RequestBody(required = false) TeacherQuery teacherQuery) {
@@ -97,7 +99,7 @@ public class EduTeacherController {
         if (!StringUtils.isEmpty(teacherQuery.getEnd())) {
             wrapper.le("gmt_modified", teacherQuery.getEnd());
         }
-
+        // 按照修改日期进行排序后返回展示
         wrapper.orderByDesc("gmt_modified");
         this.eduTeacherService.page(page, wrapper);
         long total = page.getTotal(); //总记录数

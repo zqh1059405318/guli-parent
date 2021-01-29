@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
+// 指定去扫描eduservice下面的mapper包，在项目启动的时候进行扫描注入
 @MapperScan("com.atguigu.eduservice.mapper")
 public class EduConfig {
     /**
@@ -34,7 +35,7 @@ public class EduConfig {
     }
 
     /**
-     * 分页插件
+     * 分页插件 配置好之后，才可以用mybaits进行分页操作
      */
     @Bean
     public PaginationInterceptor paginationInterceptor() {
