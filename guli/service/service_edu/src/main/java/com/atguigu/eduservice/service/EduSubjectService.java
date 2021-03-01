@@ -4,6 +4,9 @@ import com.atguigu.eduservice.entity.EduSubject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * <p>
  * 课程科目 服务类
@@ -15,4 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface EduSubjectService extends IService<EduSubject> {
 
     void saveSubject(MultipartFile file, EduSubjectService subjectService);
+
+    List<HashMap<String, Object>> showTreeData();
 }

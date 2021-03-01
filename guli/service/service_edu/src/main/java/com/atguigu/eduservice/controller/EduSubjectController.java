@@ -4,12 +4,13 @@ package com.atguigu.eduservice.controller;
 import com.atguigu.commonutils.R;
 import com.atguigu.eduservice.service.EduSubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * <p>
@@ -31,6 +32,14 @@ public class EduSubjectController {
     public R addSubject(MultipartFile file) {
         // 不需要存储url，只是把上传的这个文件用easyexcel进行读取即可。
         eduSubjectService.saveSubject(file, eduSubjectService);
+        return R.ok();
+    }
+
+    // 课程分类接口
+    @GetMapping("getAllSubject")
+    public R getAllSubject() {
+        // List<HashMap<String, Object>> reslist = new ArrayList<>();
+        List<HashMap<String, Object>> reslist = eduSubjectService.showTreeData();
         return R.ok();
     }
 }
