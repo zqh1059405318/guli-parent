@@ -10,9 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/eduoss/fileOss")
-@CrossOrigin
 public class OssController {
 
     @Resource
