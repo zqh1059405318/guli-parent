@@ -18,7 +18,7 @@
           :on-error="fileUploadError"
           :disabled="importBtnDisabled"
           :limit="1"
-          :action="BASE_API+'/eduservice/subject/addSubject'"
+          :action="BASE_API+'/eduservice/subject/addSubject'" 
           name="file"
           accept="application/vnd.ms-excel">
           <!-- accept表示只接受excel的文件 -->
@@ -59,6 +59,7 @@ export default {
                     message: '添加课程成功'
                 })
                 // 跳转到课程分类列表中去
+                this.$route.push({path:'/subject/list'})
             }
         },
         fileUploadError(){

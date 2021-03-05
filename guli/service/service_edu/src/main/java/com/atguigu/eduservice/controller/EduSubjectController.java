@@ -2,6 +2,7 @@ package com.atguigu.eduservice.controller;
 
 
 import com.atguigu.commonutils.R;
+import com.atguigu.eduservice.entity.subject.OneSubject;
 import com.atguigu.eduservice.service.EduSubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +40,8 @@ public class EduSubjectController {
     @GetMapping("getAllSubject")
     public R getAllSubject() {
         // List<HashMap<String, Object>> reslist = new ArrayList<>();
-        List<HashMap<String, Object>> reslist = eduSubjectService.showTreeData();
-        return R.ok();
+        List<OneSubject> reslist = eduSubjectService.showTreeData();
+        return R.ok().data("reslist", reslist);
     }
 }
 
