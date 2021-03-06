@@ -3,6 +3,7 @@ package com.atguigu.eduservice.entity.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+// vo类，用于表单的封装
 @Data
 public class TeacherQuery {
     @ApiModelProperty(value = "教师名称,模糊查询")
