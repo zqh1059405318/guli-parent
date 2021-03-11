@@ -120,25 +120,61 @@ export default {
       
       this.init()
   },
+  // 如果不加watch监听会出现以下问题：第一次点击修改的时候，界面里有数据，第二次再去点击
+  // 添加讲师，预期没有数据，结果表单页面上还是显示数据，这是因为多次路由跳转到同一个界面的时候，
+  //created方法只会执行一次 ，因此一直是第一次的数据。
+  watch: {
+    // 监听
+    $route(to, from) {
+      // 路由发生变化，就会执行
+      this.init()
+    },
+  },
 
   methods: {
         init(){
-            this.getListTeacher()
-            this.getOneSubject()
+            //首先判断是否有初始值，如果有，说明是第二/三步返回的，因此要数据回显
+            if(this.$route.params && this.$route.params.id) {
+                this.courseId = this.$route.params.id
+                this.getInfo()
+            }else{
+                this.getListTeacher()
+                this.getOneSubject()
+            }
         },
         saveOrUpdate() {
+            if(this.courseInfo.id){
+                this.upDateCourse()
+            }
+            else{
+                this.addCourse()
+            }
+
+            
+        },
+        // 更新课程
+        upDateCourse(){
+            course.updateCourseInfo(this.courseInfo)
+                .then(response =>{
+                    this.$message({
+                        type: 'success',
+                        message: '修改课程信息成功!'
+                        }),     
+                    this.$router.push({ path: '/course/chapter/'+this.courseId})
+                })
+        },
+
+        //添加课程
+        addCourse(){
             course.addCourseInfo(this.courseInfo)
                 .then(response =>{
                     this.$message({
                         type: 'success',
                         message: '添加课程信息成功!'
-                        }),
-                    console.log(response.data.courseId),       
+                        }),     
                     this.$router.push({ path: '/course/chapter/'+response.data.courseId})
                 })
-            
         },
-
         //查询所有的讲师
         getListTeacher() {
             course.getListTeacher().then(response => {this.teacherList = response.data.items})
@@ -176,6 +212,29 @@ export default {
         handleAvatarSuccess(res,file) {
             this.courseInfo.cover = res.data.url
         },
+
+        // 数据回显函数
+        getInfo() {
+            course.getCourseInfoId(this.courseId)
+                    .then(response => {      
+                        this.courseInfo = response.data.courseInfo         
+                        //查询有的分类
+                        subject.getSubjectList()
+                               .then(res => {
+                                   //获取所有一级分类
+                                   this.subjectOneList= res.data.reslist
+                                   //把所有一级分类数组进行遍历,比较当前curseInfo里面一级分类id和所有一级分类id
+                                   for (var i = 0; i < this.subjectOneList.length; i++) {
+                                       var oneSubject = this.subjectOneList[i]
+                                       if(this.courseInfo.subjectParentId == oneSubject.id) {
+                                           this.subjectTwoList = oneSubject.children
+                                       }
+                                   }
+                               })
+                        this.getListTeacher()
+                    })
+        },
+
   }
 }
 </script>

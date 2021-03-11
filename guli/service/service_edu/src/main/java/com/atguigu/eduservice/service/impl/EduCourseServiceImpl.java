@@ -12,6 +12,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * <p>
  * 课程 服务实现类
@@ -25,7 +27,6 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
 
     @Autowired
     private EduCourseDescriptionService eduCourseDescriptionService;
-
     // 同时向课程表和简介表添加数据
     @Override
     public String saveCourseInfo(CourseInfoVo courseInfoVo) {
@@ -44,5 +45,35 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
         eduCourseDescription.setId(cid);
         eduCourseDescriptionService.save(eduCourseDescription);
         return cid;
+    }
+
+    @Override
+    public CourseInfoVo getCourseInfo(String courseId) {
+
+        CourseInfoVo courseInfoVo = new CourseInfoVo();
+        // 查询课程表
+        EduCourse eduCourse = baseMapper.selectById(courseId);
+        BeanUtils.copyProperties(eduCourse, courseInfoVo);
+        // 查询描述表
+        EduCourseDescription eduCourseDescription = eduCourseDescriptionService.getById(courseId);
+        courseInfoVo.setDescription(eduCourseDescription.getDescription());
+        return courseInfoVo;
+    }
+
+    @Override
+    public void updateCourseInfo(CourseInfoVo courseInfoVo) {
+        EduCourse eduCourse = new EduCourse();
+        BeanUtils.copyProperties(courseInfoVo, eduCourse);
+        // 返回值 1成功 0失败
+        int res = baseMapper.updateById(eduCourse);
+        if (res == 0) {
+            throw new GuliException(20001, "添加课程失败");
+        }
+
+        // 为了对应关系，获取添加之后的课程id
+        EduCourseDescription eduCourseDescription = new EduCourseDescription();
+        eduCourseDescription.setId(courseInfoVo.getId());
+        BeanUtils.copyProperties(courseInfoVo, eduCourseDescription);
+        eduCourseDescriptionService.updateById(eduCourseDescription);
     }
 }

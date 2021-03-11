@@ -48,7 +48,7 @@ public class EduTeacherController {
     @DeleteMapping("{id}")
     public R removeById(
             @ApiParam(name = "id", value = "讲师ID", required = true)
-            @PathVariable String id) {
+            @PathVariable("id") String id) {
         boolean flag = eduTeacherService.removeById(id);
         return flag ? R.ok() : R.error();
     }
@@ -58,9 +58,9 @@ public class EduTeacherController {
     @GetMapping("pageTeacher/{current}/{limit}")
     public R pageTeacher(
             @ApiParam(name = "current", value = "当前页码", required = true)
-            @PathVariable Long current,
+            @PathVariable("current") Long current,
             @ApiParam(name = "limit", value = "每页记录数", required = true)
-            @PathVariable Long limit) {
+            @PathVariable("limit") Long limit) {
 
         // 如果是分页查询的话，就要首先创建page对象
         Page<EduTeacher> pageTeacher = new Page<>(current, limit);
@@ -78,7 +78,7 @@ public class EduTeacherController {
     //如果变脸带了@RequestBody注解，则是前端往后端传的一部分json/xml的数据。
     //TeacherQuery是vo里面的一个条件类，前端要传一个条件类进来（json格式）
     @PostMapping("pageTeacherCondition/{current}/{limit}")
-    public R pageTeacherCondition(@PathVariable long current, @PathVariable long limit,
+    public R pageTeacherCondition(@PathVariable("current") long current, @PathVariable("limit") long limit,
                                   @RequestBody(required = false) TeacherQuery teacherQuery) {
 
         Page<EduTeacher> page = new Page<>(current, limit);
@@ -112,9 +112,9 @@ public class EduTeacherController {
     @GetMapping("pageTeacherCondition2/{current}/{limit}")
     public R pageTeacherCondition2(
             @ApiParam(name = "current", value = "当前页码", required = true)
-            @PathVariable Long current,
+            @PathVariable("current") Long current,
             @ApiParam(name = "limit", value = "每页记录数", required = true)
-            @PathVariable Long limit,
+            @PathVariable("limit") Long limit,
             @ApiParam(name = "teacherQuery", value = "查询对象", required = false)
                     TeacherQuery teacherQuery) {
 
@@ -144,7 +144,7 @@ public class EduTeacherController {
     @ApiOperation(value = "根据ID查询讲师")
     public R getById(
             @ApiParam(name = "id", value = "讲师ID", required = true)
-            @PathVariable String id) {
+            @PathVariable("id") String id) {
 
         EduTeacher teacher = eduTeacherService.getById(id);
         return R.ok().data("teacher", teacher);
@@ -157,7 +157,7 @@ public class EduTeacherController {
     @ApiOperation(value = "根据ID修改讲师数据")
     public R updateById(
             @ApiParam(name = "id", value = "讲师ID", required = true)
-            @PathVariable String id,
+            @PathVariable("id") String id,
 
             @ApiParam(name = "teacher", value = "讲师对象", required = true)
             @RequestBody EduTeacher teacher) {

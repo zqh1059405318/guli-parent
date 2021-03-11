@@ -7,6 +7,7 @@ import com.atguigu.eduservice.entity.chapter.VideoVo;
 import com.atguigu.eduservice.mapper.EduChapterMapper;
 import com.atguigu.eduservice.service.EduChapterService;
 import com.atguigu.eduservice.service.EduVideoService;
+import com.atguigu.servicebase.config.exception.GuliException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
@@ -56,9 +57,9 @@ public class EduChapterServiceImpl extends ServiceImpl<EduChapterMapper, EduChap
 
             // 创建一个video队列
             List<VideoVo> children = new ArrayList<>();
-            for (int j = 0; j < videos.size(); j++){
+            for (int j = 0; j < videos.size(); j++) {
                 EduVideo eduVideo = videos.get(j);
-                if(eduVideo.getChapterId().equals(chapterId)){
+                if (eduVideo.getChapterId().equals(chapterId)) {
                     VideoVo videoVo = new VideoVo();
                     BeanUtils.copyProperties(eduVideo, videoVo);
                     children.add(videoVo);
@@ -67,5 +68,18 @@ public class EduChapterServiceImpl extends ServiceImpl<EduChapterMapper, EduChap
             chapterVo.setChildren(children);
         }
         return chapterVos;
+    }
+
+    @Override
+    public boolean deleteChapter(String chapterId) {
+        QueryWrapper<EduVideo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("chapter_Id", chapterId);
+        List<EduVideo> videos = eduVideoService.list(queryWrapper);
+        if (videos == null) {
+            int res = baseMapper.deleteById(chapterId);
+            return res > 0;
+        } else {
+            throw new GuliException(20001, "无法删除");
+        }
     }
 }
