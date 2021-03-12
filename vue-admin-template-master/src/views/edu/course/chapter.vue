@@ -46,7 +46,7 @@
         </el-form-item>
        
         <!-- TODO -->
-        <!-- <el-form-item label="上传视频">
+        <el-form-item label="上传视频">
         <el-upload
             :on-success="handleVodUploadSuccess"
             :on-remove="handleVodRemove"
@@ -66,7 +66,7 @@
             <i class="el-icon-question"/>
         </el-tooltip>
         </el-upload>
-    </el-form-item> -->
+    </el-form-item>
         
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -327,6 +327,39 @@ export default {
 
 
 //—————————————与小节有关———————————————//
+
+//—————————————与视频有关———————————————//
+       //点击x调用的方法
+       beforeVodRemove(file,fileList) {
+         return this.$confirm(`确定移除 ${file.name}?`)
+       },
+       //点击确定调用的方法
+       handleVodRemove() {
+         video.deleteAliyunvod(this.video.videoSourceId)
+              .then(response => {
+                 this.$message({
+                     type: 'success',
+                     message: '删除视频成功!'
+                   });
+                 //把文件列表清空
+                 this.fileList = []  
+                 //删除视频之后把视频id和视频名称清空
+                 this.video.videoSourceId = ''
+                 this.video.videoOriginalName = ''
+              })
+       },
+       //上传成功之后调用的方法
+       handleVodUploadSuccess(response, file, fileList) {
+         this.video.videoSourceId = response.data.videoId
+         this.video.videoOriginalName = file.name
+       },
+       //上传之前调用的方法
+       handleUploadExceed() {
+         this.$message.warning('想要重新上传视频，请先删除已上传的视频')
+       },
+
+//—————————————与视频有关———————————————//
+
       //根据课程id查询章节和小节，展示函数
       getChapterVideo() {
         chapter.getAllChapterVideo(this.courseId).then(response => {this.chapterVideoList = response.data.allChapterVideo})
