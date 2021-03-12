@@ -48,7 +48,7 @@ export default {
     //课程列表展示
     pageCourseCondition(current,limit,courseQuery) {
         return request({
-            url: `/eduservice/course/pageTeacherCondition/${current}/${limit}`,
+            url: `/eduservice/course/pageCourse/${current}/${limit}`,
             method: 'post',
             data: courseQuery
         })
@@ -56,7 +56,7 @@ export default {
     //删除课程
     deleteCourse(courseId) {
         return request({
-            url: '/eduservice/course/'+courseId,
+            url: '/eduservice/course/deleteCourse/'+courseId,
             method: 'delete'
         })
     }

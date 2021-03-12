@@ -1,13 +1,21 @@
 package com.atguigu.eduservice.service.impl;
 
+import com.atguigu.eduservice.entity.EduChapter;
 import com.atguigu.eduservice.entity.EduCourse;
 import com.atguigu.eduservice.entity.EduCourseDescription;
 import com.atguigu.eduservice.entity.vo.CourseInfoVo;
+import com.atguigu.eduservice.entity.vo.CoursePublishVo;
+import com.atguigu.eduservice.entity.vo.CourseQuery;
 import com.atguigu.eduservice.mapper.EduCourseMapper;
+import com.atguigu.eduservice.service.EduChapterService;
 import com.atguigu.eduservice.service.EduCourseDescriptionService;
 import com.atguigu.eduservice.service.EduCourseService;
+import com.atguigu.eduservice.service.EduVideoService;
 import com.atguigu.servicebase.config.exception.GuliException;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +35,12 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
 
     @Autowired
     private EduCourseDescriptionService eduCourseDescriptionService;
+
+    @Autowired
+    private EduVideoService eduVideoService;
+
+    @Autowired
+    private EduChapterService eduChapterService;
     // 同时向课程表和简介表添加数据
     @Override
     public String saveCourseInfo(CourseInfoVo courseInfoVo) {
@@ -76,4 +90,51 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
         BeanUtils.copyProperties(courseInfoVo, eduCourseDescription);
         eduCourseDescriptionService.updateById(eduCourseDescription);
     }
+
+    @Override
+    public CoursePublishVo publishCourseInfo(String id) {
+        CoursePublishVo publishCourseInfo = baseMapper.getPublishCourseInfo(id);
+        return publishCourseInfo;
+    }
+
+    // 传入courseQuery对数据进行查询
+    @Override
+    public void pageQuery(Page<EduCourse> pageCourse, CourseQuery courseQuery) {
+        QueryWrapper<EduCourse> queryWrapper = new QueryWrapper<>();
+        // 如果为空的话，则全部返回即可
+        if (courseQuery == null) {
+            baseMapper.selectPage(pageCourse, queryWrapper);
+            return;
+        }
+        String title = courseQuery.getTitle();
+        String status = courseQuery.getStatus();
+        String begin = courseQuery.getBegin();
+        String end = courseQuery.getEnd();
+        if (!StringUtils.isEmpty(title)) {
+            queryWrapper.like("title", title);
+        }
+        if (!StringUtils.isEmpty(status)) {
+            queryWrapper.like("status", status);
+        }
+        if (!StringUtils.isEmpty(begin)) {
+            queryWrapper.ge("gmt_create", begin);
+        }
+
+        if (!StringUtils.isEmpty(end)) {
+            queryWrapper.le("gmt_create", end);
+        }
+        baseMapper.selectPage(pageCourse, queryWrapper);
+    }
+
+    @Override
+    public void removeCourse(String courseId) {
+        this.eduVideoService.removeVideoCourseId(courseId);
+        this.eduChapterService.removeChapterCourseId(courseId);
+        this.eduCourseDescriptionService.removeById(courseId);
+        int res = baseMapper.deleteById(courseId);
+        if(res == 0) {
+            throw new GuliException(20001,"删除失败");
+        }
+    }
+
 }

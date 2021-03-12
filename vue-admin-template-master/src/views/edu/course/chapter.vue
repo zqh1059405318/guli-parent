@@ -12,7 +12,7 @@
 
     <el-button type="text" @click="openChapterDialog">添加章节</el-button>
 
-    <!-- 添加和修改章节表单 -->
+    <!-- 添加和修改章节表单  章节输入框-->
     <el-dialog :visible.sync="dialogChapterFormVisible" title="添加章节">
         <el-form :model="chapter" label-width="120px">
             <el-form-item label="章节标题">
@@ -28,6 +28,53 @@
         </div>
     </el-dialog>
 
+
+   <!-- 添加和修改课时表单 课时（video）输入框 -->
+    <el-dialog :visible.sync="dialogVideoFormVisible" title="添加课时">
+      <el-form :model="video" label-width="120px">
+        <el-form-item label="课时标题">
+          <el-input v-model="video.title"/>
+        </el-form-item>
+        <el-form-item label="课时排序">
+          <el-input-number v-model="video.sort" :min="0" controls-position="right"/>
+        </el-form-item>
+        <el-form-item label="是否免费">
+          <el-radio-group v-model="video.isFree">
+            <el-radio :label=0>免费</el-radio>
+            <el-radio :label=1>默认</el-radio>
+          </el-radio-group>
+        </el-form-item>
+       
+        <!-- TODO -->
+        <!-- <el-form-item label="上传视频">
+        <el-upload
+            :on-success="handleVodUploadSuccess"
+            :on-remove="handleVodRemove"
+            :before-remove="beforeVodRemove"
+            :on-exceed="handleUploadExceed"
+            :file-list="fileList"
+            :action="BASE_API+'/eduvod/video/uploadAlyVideo'"
+            :limit="1"
+            class="upload-demo">
+        <el-button size="small" type="primary">上传视频</el-button>
+        <el-tooltip placement="right-end">
+            <div slot="content">最大支持1G，<br>
+                支持3GP、ASF、AVI、DAT、DV、FLV、F4V、<br>
+                GIF、M2T、M4V、MJ2、MJPEG、MKV、MOV、MP4、<br>
+                MPE、MPG、MPEG、MTS、OGG、QT、RM、RMVB、<br>
+                SWF、TS、VOB、WMV、WEBM 等视频格式上传</div>
+            <i class="el-icon-question"/>
+        </el-tooltip>
+        </el-upload>
+    </el-form-item> -->
+        
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button  @click="dialogVideoFormVisible = false">取 消</el-button>
+        <el-button  type="primary" @click="saveOrUpdateVideo">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 章节 -->
     <ul class="chanpterList">
         <li
@@ -37,9 +84,9 @@
                 {{ chapter.title }}
 
                 <span class="acts">
-                    <el-button type="text" >添加课时</el-button>
+                    <el-button type="text" @click="openVideo(chapter.id)">添加小节</el-button>
                     <el-button style="" type="text" @click="openEditChapter(chapter.id)">编辑</el-button>
-                    <el-button type="text">删除</el-button>
+                    <el-button type="text" @click="removeChapter(chapter.id)">删除</el-button>
                 </span>
             </p>
 
@@ -50,8 +97,8 @@
                         :key="video.id">
                         <p>{{ video.title }}
                             <span class="acts">
-                                <el-button type="text">编辑</el-button>
-                                <el-button type="text">删除</el-button>
+                                <el-button type="text" @click="openEditVideo(video.id)">编辑</el-button>
+                                <el-button type="text" @click="removeVideo(video.id)">删除</el-button>
                             </span>
                         </p>
                     </li>
@@ -68,6 +115,7 @@
 <script>
 
 import chapter from '@/api/edu/chapter'
+import video from '@/api/edu/video'
 export default {
   data() {
         return {
@@ -81,7 +129,7 @@ export default {
             video: {
               title: '',
               sort: 0,
-              isFree: false,
+              isFree: 0,
               videoSourceId: '',
               videoOriginalName: ''
             },
@@ -117,6 +165,8 @@ export default {
               
           })
       },
+
+//—————————————与章节有关———————————————//
       // 只要是弹窗里的确定，都会调用saveOrUpdate函数
       saveOrUpdate(){
         // 如果有id 说明是在修改阶段，因为这个时候已经调用了数据的回显，这个时候的chapter是完整的
@@ -127,7 +177,7 @@ export default {
         }
         
       },
-      
+      // 单纯的添加章节
       addChapter() {
         //给chapter添加一个courseId
         this.chapter.courseId = this.courseId
@@ -160,16 +210,32 @@ export default {
                   this.getChapterVideo()
             })
       },
+      // 删除当前章节，根据里面是否有video来表示
+      removeChapter(chapterId){
+          console.log(chapterId)
+          this.$confirm('此操作将永久删除章节, 是否继续?', '提示', {
+                  confirmButtonText: '确定',
+                 cancelButtonText: '取消',
+                  type: 'warning'
+                }).then(()=>{ 
+                    chapter.deleteChapter(chapterId)
+                      .then(response =>{
+                            this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                            })       
+                            this.getChapterVideo()
+                      })
+                })
+      },
       //刷新弹出框,记得要加this，才会指向当前的变量值，添加章节的时候调用
       openChapterDialog(){
-          console.log(this.chapter)
-          this.chapter.title = ''
-          this.chapter.sort = 0
-          this.chapter.id = ''
-          this.dialogChapterFormVisible = true
-
+            this.chapter.title = ''
+            this.chapter.sort = 0
+            this.chapter.id = ''
+            this.dialogChapterFormVisible = true
       },
-      // 修改章节的弹窗，点击编辑的时候调用
+      // 修改章节的弹窗，点击编辑的时候调用,这样就可以进行数据的回显
       openEditChapter(chapterId){
           //弹框
           this.dialogChapterFormVisible = true
@@ -180,7 +246,87 @@ export default {
             })
           // }
       },
+//—————————————与章节有关———————————————//
 
+//—————————————与小节有关———————————————//
+      openVideo(chapterId){
+          this.video.courseId = this.courseId
+          this.video.chapterId=chapterId
+          this.video.title='',
+          this.video.sort=0,
+          this.video.isFree=0,
+          this.video.videoSourceId='',
+          this.video.videoOriginalName=''
+          this.dialogVideoFormVisible = true
+      },
+      saveOrUpdateVideo(){
+          // 如果有值，说明是进行修改
+          if(this.video.id){
+            this.updateVideo()
+          }else{
+              this.addVideo()
+          }
+      },
+      // 新增小节
+      addVideo(){
+          video.addVideo(this.video)
+              .then(response=>{
+                //关闭弹框
+                this.dialogVideoFormVisible = false
+                //提示信息
+                this.$message({
+                  type: 'success',
+                  message: '添加小节信息成功!'
+                });
+                //刷新页面
+                this.getChapterVideo()
+            })
+      },
+      // 展示章节信息（数据的回显）
+      openEditVideo(videoId){
+          //弹框
+          this.dialogVideoFormVisible = true
+          video.getVideo(videoId)
+            .then(response =>{
+                this.video = response.data.video
+            })
+      },
+      // 修改章节信息章节
+      updateVideo(){
+          video.updateVideo(this.video)
+              .then(response=>{
+                    //关闭弹框
+                    this.dialogVideoFormVisible = false
+                    //提示信息
+                    this.$message({
+                      type: 'success',
+                      message: '修改小节信息成功!'
+                    });
+                    //刷新页面
+                    this.getChapterVideo()
+              })
+      },
+
+      // 删除小节
+      removeVideo(videoId){
+          this.$confirm('此操作将永久删除小节, 是否继续?', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                }).then(()=>{ 
+                    video.deleteVideo(videoId)
+                      .then(response =>{
+                            this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                            })       
+                            this.getChapterVideo()
+                      })
+                })
+      },
+
+
+//—————————————与小节有关———————————————//
       //根据课程id查询章节和小节，展示函数
       getChapterVideo() {
         chapter.getAllChapterVideo(this.courseId).then(response => {this.chapterVideoList = response.data.allChapterVideo})

@@ -53,7 +53,7 @@ public class EduChapterController {
     }
 
     //删除章节
-    @DeleteMapping("{chapterId}")
+    @DeleteMapping("/deleteChapter/{chapterId}")
     public R deleteChapter(@PathVariable String chapterId) {
         boolean flag = this.eduChapterService.deleteChapter(chapterId);
         return flag ? R.ok() : R.error();

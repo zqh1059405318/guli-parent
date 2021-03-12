@@ -75,11 +75,18 @@ public class EduChapterServiceImpl extends ServiceImpl<EduChapterMapper, EduChap
         QueryWrapper<EduVideo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("chapter_Id", chapterId);
         List<EduVideo> videos = eduVideoService.list(queryWrapper);
-        if (videos == null) {
+        if (videos.isEmpty()) {
             int res = baseMapper.deleteById(chapterId);
             return res > 0;
         } else {
             throw new GuliException(20001, "无法删除");
         }
+    }
+
+    @Override
+    public void removeChapterCourseId(String courseId) {
+        QueryWrapper<EduChapter> wrapper = new QueryWrapper<>();
+        wrapper.eq("course_id",courseId);
+        baseMapper.delete(wrapper);
     }
 }
