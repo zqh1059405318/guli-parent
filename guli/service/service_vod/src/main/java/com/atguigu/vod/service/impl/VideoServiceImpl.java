@@ -48,11 +48,13 @@ public class VideoServiceImpl implements VideoService {
         }
     }
 
+    // 删除多个视频
     @Override
     public void removeMoreAlyVideo(List videoIdList) {
         try{
             DefaultAcsClient client = InitVodClient.initVodClient(ConstantVodUtils.ACCESS_KEY_ID, ConstantVodUtils.ACCESS_KEY_SECRET);
             DeleteVideoRequest request = new DeleteVideoRequest();
+            // 对字符串进行拼接
             String videoIds = StringUtils.join(videoIdList.toArray(), ",");
             request.setVideoIds(videoIds);
             client.getAcsResponse(request);

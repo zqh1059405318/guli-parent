@@ -127,6 +127,7 @@ public class EduCourseServiceImpl extends ServiceImpl<EduCourseMapper, EduCourse
     }
 
     @Override
+    // 删除课程，在删除课程的同时，会删除对应的章节和小节
     public void removeCourse(String courseId) {
         this.eduVideoService.removeVideoCourseId(courseId);
         this.eduChapterService.removeChapterCourseId(courseId);

@@ -49,7 +49,7 @@ public class VideoController {
 
     }
 
-    //删除多个阿里云视频得方法
+    //删除多个阿里云视频的方法
     @DeleteMapping("/delete-batch")
     public R deleteBatch(@RequestParam("videoIdList") List<String> videoIdList) {
         this.videoService.removeMoreAlyVideo(videoIdList);

@@ -7,8 +7,10 @@ import com.atguigu.eduservice.entity.EduChapter;
 import com.atguigu.eduservice.entity.EduVideo;
 import com.atguigu.eduservice.entity.chapter.ChapterVo;
 import com.atguigu.eduservice.service.EduVideoService;
+import com.atguigu.servicebase.config.exception.GuliException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +32,7 @@ public class EduVideoController {
 
     @Autowired
     private VodClient vodClient;
+
     //添加视频/小节
     @PostMapping("/addVideo")
     public R addVideo(@RequestBody EduVideo eduVideo) {
@@ -44,14 +47,16 @@ public class EduVideoController {
         return R.ok();
     }
 
-    //删除小节,传入的是小节id
+    //删除小节,传入的是小节id，也就是删除小节信息的同时对视频就行删除,该处应该是一个事务
+    @Transactional
     @DeleteMapping("/deleteVideo/{videoId}")
     public R deleteVideo(@PathVariable("videoId") String videoId) {
         //这里的videoId是小节id，并不是视频id
         EduVideo eduVideo = this.eduVideoService.getById(videoId);
         String videoSourceId = eduVideo.getVideoSourceId();
-        if(!StringUtils.isEmpty(videoSourceId)) {
-            vodClient.removeAliyunVideo(videoSourceId);
+        if (!StringUtils.isEmpty(videoSourceId)) {
+            R result = vodClient.removeAliyunVideo(videoSourceId);
+            if (result.getCode() == 20001) throw new GuliException(20001, "删除视频失败");
         }
         boolean flag = this.eduVideoService.removeById(videoId);
         return flag ? R.ok() : R.error();
@@ -61,7 +66,7 @@ public class EduVideoController {
     @GetMapping("/getVideoInfo/{id}")
     public R getVideoInfo(@PathVariable String id) {
         EduVideo eduVideo = this.eduVideoService.getById(id);
-        return R.ok().data("video",eduVideo);
+        return R.ok().data("video", eduVideo);
     }
 
 }

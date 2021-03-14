@@ -257,6 +257,8 @@ export default {
           this.video.isFree=0,
           this.video.videoSourceId='',
           this.video.videoOriginalName=''
+          this.video.id = ''
+          this.fileList = []
           this.dialogVideoFormVisible = true
       },
       saveOrUpdateVideo(){
@@ -318,7 +320,7 @@ export default {
                       .then(response =>{
                             this.$message({
                             type: 'success',
-                            message: '删除成功!'
+                            message: '删除小节信息成功!'
                             })       
                             this.getChapterVideo()
                       })
@@ -330,6 +332,7 @@ export default {
 
 //—————————————与视频有关———————————————//
        //点击x调用的方法
+      //TODO:，添加视频之后，直接刷新后，再编辑的时候，无法看到相关的视频
        beforeVodRemove(file,fileList) {
          return this.$confirm(`确定移除 ${file.name}?`)
        },
